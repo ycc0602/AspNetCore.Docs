@@ -74,27 +74,26 @@ The preceding code:
 * Specifies a round robin load balancer in the service config.
 * Starts the gRPC call `SayHello`.
   * `RoundRobinLoadBalancer` will attempt to connect to all resolved addresses.
-  * gRPC calls are distributed evenly across the addresses using round-robin logic.
+  * gRPC calls are distributed evenly using round-robin logic.
 
 ## AddressResolver and LoadBalancer
 
-gRPC client-side load balancing has two extension points: `AddressResolver` and `LoadBalancer`. Some implementations of these types are built-in to gRPC for .NET.
+gRPC client-side load balancing has two extension points: `AddressResolver` and `LoadBalancer`. Some implementations are built into gRPC for .NET.
 
-* `AddressResolver` - Resolves the available endpoints for the client. An address resolver is selected using the address scheme.
+* `AddressResolver` - Base type for resolving addresses for the client. An address resolver is selected using the address scheme.
   
   * `DnsAddressResolver` - Resolve addresses from a DNS host name. DNS host names are updated in the background every 5 seconds. DNS resolution is commonly used to load balance over pod instances that have a [Kubernetes headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services).
   * `StaticAddressResolver` - Resolve addresses from a static collection that is specified when the resolver is created. Useful if the addresses aren't dynamic.
 
-* `LoadBalancer` - Picks from the available addresses based on the load balancing implementation. A load balancer is configured in the service config.
+* `LoadBalancer` - Base type for picking from the available addresses. A load balancer is configured in the service config.
 
   * `PickFirstLoadBalancer` - Iterate through the addresses and attempting to connect to them. The first successful connection will always be used.
   * `RoundRobinLoadBalancer` - Attempts to connect to all addresses. gRPC calls are distributed across all connections using round-robin logic.
 
 ## Write and use custom resolvers and load balancers
 
-
+TODO
 
 ## Additional resources
 
 * <xref:grpc/client>
-* [Retry general guidance - Best practices for cloud applications](/azure/architecture/best-practices/transient-faults)
