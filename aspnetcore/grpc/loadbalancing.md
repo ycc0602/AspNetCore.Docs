@@ -20,10 +20,10 @@ gRPC client-side load balancing requires [Grpc.Net.Client](https://www.nuget.org
 
 Client-side load balancing is configured when a channel is created. The two components to consider when using load balancing:
 
-* The address resolver, which resolvers the addresses.
-* The load balancer, which picks the address that should be used for a gRPC call.
+* The address resolver, which resolves the addresses.
+* The load balancer, which creates connections and picks the address that should be used for a gRPC call.
 
-The address resolver is configured using the scheme of the address URI. For example, a `dns` scheme maps to `DnsAddressResolver`. This resolver gets the Internet Protocol (IP) addresses for the specified address.
+The address resolver is configured using the scheme of the address URI. For example, a `dns` scheme maps to `DnsAddressResolver`. This resolver gets the Internet Protocol (IP) addresses for the specified hostname.
 
 ```csharp
 var channel = GrpcChannel.ForAddress(
@@ -39,11 +39,11 @@ The preceding code:
 * Configures the created channel with the address `dns://backend.default.svc.cluster.local`. The `dns` schema maps to `DnsAddressResolver`.
 * Doesn't specify a load balancer. The channel defaults to `PickFirstLoadBalancer`.
 * Starts the gRPC call `SayHello`.
-  * `DnsAddressResolver` resolves IP addresses for the host name `backend.default.svc.cluster.local`. The result is cached and periodically refreshed. The host name value depends upon the environment.
+  * `DnsAddressResolver` resolves IP addresses for the hostname `backend.default.svc.cluster.local`. The result is cached and periodically refreshed. The hostname value depends upon the environment.
   * `PickFirstLoadBalancer` attempts to connect to one of the resolved IP addresses.
   * The call is sent to the first IP address the channel successfully connects to.
 
-A load balancer is specified in the service config. If no service config or load balancer is specified, the channel defaults to `PickFirstLoadBalancer`. Another load balancer implementation that is included is `RoundRobinLoadBalancer`. The `RoundRobinLoadBalancer` attempts to connect to all IP addresses returned by the address resolver. The load balancer then distributes load across all IP addresses.
+A load balancer is specified in the service config. If no service config or load balancer is specified, the channel defaults to `PickFirstLoadBalancer`. Another load balancer implementation that is included is `RoundRobinLoadBalancer`. The `RoundRobinLoadBalancer` attempts to connect to all IP addresses returned by the address resolver. The load balancer then distributes load across all connections.
 
 ```csharp
 var channel = GrpcChannel.ForAddress(
@@ -71,7 +71,7 @@ gRPC client-side load balancing has two extension points: `AddressResolver` and 
 
 * `AddressResolver` - Base type for resolving addresses for the client. An address resolver is selected using the address scheme.
   
-  * `DnsAddressResolver` - Resolves addresses from a DNS host name. DNS host names are updated in the background every 5 seconds. DNS resolution is commonly used to load balance over pod instances that have a [Kubernetes headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services).
+  * `DnsAddressResolver` - Resolves addresses from a DNS hostname. DNS hostnames are updated in the background every 5 seconds. DNS resolution is commonly used to load balance over pod instances that have a [Kubernetes headless services](https://kubernetes.io/docs/concepts/services-networking/service/#headless-services).
   * `StaticAddressResolver` - Resolves addresses from a static collection that is specified when the resolver is created. Useful if the addresses aren't dynamic.
 
 * `LoadBalancer` - Base type for picking from the available addresses. A load balancer is configured in the service config.
