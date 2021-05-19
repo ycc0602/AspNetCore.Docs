@@ -1,5 +1,5 @@
 ---
-title: Scalable apps with gRPC client-side load balancing
+title: gRPC client-side load balancing
 author: jamesnk
 description: Learn how to make scalable, high-performance gRPC apps with client-side load balancing in .NET.
 monikerRange: '>= aspnetcore-3.0'
@@ -8,30 +8,13 @@ ms.date: 05/18/2021
 no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/loadbalancing
 ---
-# Scalable apps with gRPC client-side load balancing
+# gRPC client-side load balancing
 
 By [James Newton-King](https://twitter.com/jamesnk)
 
 gRPC client-side load balancing is a feature that allows gRPC clients to distribute load optimally across available servers. This article discusses how to configure a client-side load balancing to create scalable, high-performance gRPC apps in .NET.
 
 gRPC client-side load balancing requires [Grpc.Net.Client](https://www.nuget.org/packages/Grpc.Net.Client) version XXXX or later.
-
-## Why load balancing is important
-
-HTTP/2 multiplexes multiple calls on a single TCP connection. If gRPC and HTTP/2 are used with a network load balancer (NLB), the connection is forwarded to a server and all gRPC calls are sent to that one server. The other server instances on the NLB are idle.
-
-Network load balancers are a common solution for load balancing because they are fast and lightweight. For example, Kubernetes by default uses  a network load balancer to balance connections between pod instances. However, network load balancers are not effective at distributing load when used with gRPC and HTTP/2.
-
-## Proxy or client-side load balancing?
-
-gRPC and HTTP/2 can be effectively load balanced using either an application load balancer proxy or client-side load balancing. Both of these options allow individual gRPC calls to be distributed across available servers. Deciding between proxy and client-side load balancing is an architectural choice. There are pros and cons for each.
-
-* **Proxy** - gRPC calls are sent to the proxy, the proxy makes a load balancing decision, and the gRPC call is sent on to the final endpoint. The proxy is responsible for knowing about endpoints. Using a proxy adds:
-
- * An additional network hop to gRPC calls.
- * Latency and consumes additional resources.
-
-* **Client-side load balancing** - The gRPC client makes a load balancing decision when a gRPC call is started. The gRPC call is sent directly to the final endpoint. In this model, the client is responsible for knowing about available endpoints. Client-side load balancing is a high-performance solution that eliminates the need for a proxy and additional network hops.
 
 ## Configure gRPC client-side load balancing
 
@@ -99,6 +82,28 @@ gRPC client-side load balancing has two extension points: `AddressResolver` and 
 ## Write and use custom resolvers and load balancers
 
 TODO
+
+## Why load balancing is important
+
+HTTP/2 multiplexes multiple calls on a single TCP connection. If gRPC and HTTP/2 are used with a network load balancer (NLB), the connection is forwarded to a server and all gRPC calls are sent to that one server. The other server instances on the NLB are idle.
+
+Network load balancers are a common solution for load balancing because they are fast and lightweight. For example, Kubernetes by default uses  a network load balancer to balance connections between pod instances. However, network load balancers are not effective at distributing load when used with gRPC and HTTP/2.
+
+### Proxy or client-side load balancing?
+
+gRPC and HTTP/2 can be effectively load balanced using either an application load balancer proxy or client-side load balancing. Both of these options allow individual gRPC calls to be distributed across available servers. Deciding between proxy and client-side load balancing is an architectural choice. There are pros and cons for each.
+
+* **Proxy** - gRPC calls are sent to the proxy, the proxy makes a load balancing decision, and the gRPC call is sent on to the final endpoint. The proxy is responsible for knowing about endpoints. Using a proxy adds:
+
+  * An additional network hop to gRPC calls.
+  * Latency and consumes additional resources.
+  * Proxy server must be setup and configured correctly.
+
+* **Client-side load balancing** - The gRPC client makes a load balancing decision when a gRPC call is started. The gRPC call is sent directly to the final endpoint. When using client-side load balancing:
+
+  * Client is responsible for knowing about available endpoints and making load balancing decisions.
+  * Additional client configuration required.
+  * High-performance, load balanced gRPC calls that eliminate the need for a proxy.
 
 ## Additional resources
 
