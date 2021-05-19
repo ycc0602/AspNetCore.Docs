@@ -28,7 +28,7 @@ gRPC and HTTP/2 can be effectively load balanced using either an application loa
 
 * **Proxy** - gRPC calls are sent to the proxy, the proxy makes a load balancing decision, and the gRPC call is sent on to the final endpoint. The proxy is responsible for knowing about endpoints. Using a proxy will add an additional network hop to gRPC calls. This will add latency and consume additional resources.
 
-* **Client-side load balancing** - The gRPC client will make a load balancing decision when a gRPC call is started. The gRPC call is sent directly to the final endpoint. In this model the client is responsible for knowing about available endpoints. Client-side load balancing is a high-performance solution that eliminates the need for a proxy and additional network hops.
+* **Client-side load balancing** - The gRPC client will make a load balancing decision when a gRPC call is started. The gRPC call is sent directly to the final endpoint. In this model, the client is responsible for knowing about available endpoints. Client-side load balancing is a high-performance solution that eliminates the need for a proxy and additional network hops.
 
 ## Configure gRPC client-side load balancing
 
@@ -52,13 +52,13 @@ The preceding code:
 * Starts the gRPC call `SayHello`.
   * `DnsAddressResolver` will resolve IP addresses for the host name `backend.default.svc.cluster.local`. The result is cached and periodically refreshed. The host name value will depend upon your environment.
   * `PickFirstLoadBalancer` will attempt to connect to one of the resolved IP addresses.
-  * The call will be sent to the first IP address the channel could successful connect to.
+  * The call will be sent to the first IP address the channel successfully connects to.
 
-A load balancer is specify in the service config. If no service config or load balancer is specified then the channel will default to `PickFirstLoadBalancer`. Another load balancer implementation that is included is `RoundRobinLoadBalancer`. This load balancer will attempt to connect to all IP addresses returned by the address resolver. The load balancer then distributes load across all IP addresses.
+A load balancer is specified in the service config. If no service config or load balancer is specified then the channel will default to `PickFirstLoadBalancer`. Another load balancer implementation that is included is `RoundRobinLoadBalancer`. This load balancer will attempt to connect to all IP addresses returned by the address resolver. The load balancer then distributes load across all IP addresses.
 
 ```csharp
 var channel = GrpcChannel.ForAddress(
-    "dns://backend.default.svc.cluster.local",
+    "dns://custom-hostname",
     new GrpcChannelOptions
     {
         ChannelCredentials = ChannelCredentials.Insecure,
@@ -68,6 +68,13 @@ var client = new Greet.GreeterClient(channel);
 
 var response = await client.SayHelloAsync(new HelloRequest { Name = "world" });
 ```
+
+The preceding code:
+
+* Specifies a round robin load balancer in the service config.
+* Starts the gRPC call `SayHello`.
+  * `RoundRobinLoadBalancer` will attempt to connect to all resolved addresses.
+  * gRPC calls are distributed evenly across the addresses using round-robin logic.
 
 ## AddressResolver and LoadBalancer
 
