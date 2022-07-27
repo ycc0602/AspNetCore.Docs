@@ -4,7 +4,6 @@ author: rick-anderson
 description: Part 4 of Razor Pages and Entity Framework tutorial series.
 ms.author: riande
 ms.date: 07/22/2019
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: data/ef-rp/migrations
 ---
 
@@ -14,7 +13,7 @@ By [Tom Dykstra](https://github.com/tdykstra), [Jon P Smith](https://twitter.com
 
 [!INCLUDE [about the series](~/includes/RP-EF/intro.md)]
 
-::: moniker range=">= aspnetcore-3.0"
+:::moniker range=">= aspnetcore-3.0"
 
 This tutorial introduces the EF Core migrations feature for managing data model changes.
 
@@ -44,9 +43,9 @@ Drop-Database
   dotnet tool install --global dotnet-ef
   ```
 
-* In the command prompt, navigate to the project folder. The project folder contains the *ContosoUniversity.csproj* file.
+* In the command prompt, navigate to the project folder. The project folder contains the `ContosoUniversity.csproj` file.
 
-* Delete the *CU.db* file, or run the following command:
+* Delete the `CU.db` file, or run the following command:
 
   ```dotnetcli
   dotnet ef database drop --force
@@ -80,11 +79,11 @@ dotnet ef database update
 
 ### Remove EnsureCreated
 
-This tutorial series started by using [EnsureCreated](/dotnet/api/microsoft.entityframeworkcore.infrastructure.databasefacade.ensurecreated#Microsoft_EntityFrameworkCore_Infrastructure_DatabaseFacade_EnsureCreated) . `EnsureCreated` doesn't create a migrations history table and so can't be used with migrations. It's designed for testing or rapid prototyping where the database is dropped and re-created frequently.
+This tutorial series started by using <xref:Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated%2A>. `EnsureCreated` doesn't create a migrations history table and so can't be used with migrations. It's designed for testing or rapid prototyping where the database is dropped and re-created frequently.
 
 From this point forward, the tutorials will use migrations.
 
-In *Program.cs*, delete the following line:
+In `Program.cs`, delete the following line:
 
 ```csharp
 context.Database.EnsureCreated();
@@ -114,7 +113,7 @@ The migration name parameter (`InitialCreate` in the example) is used for the fi
 
 ## The data model snapshot
 
-Migrations creates a *snapshot* of the current data model in *Migrations/SchoolContextModelSnapshot.cs*. When add a migration is added, EF determines what changed by comparing the current data model to the snapshot file.
+Migrations creates a *snapshot* of the current data model in `Migrations/SchoolContextModelSnapshot.cs`. When add a migration is added, EF determines what changed by comparing the current data model to the snapshot file.
 
 Because the snapshot file tracks the state of the data model, a migration cannot be deleted by deleting the `<timestamp>_<migrationname>.cs` file. To back out the most recent migration, use the [`migrations remove`](/ef/core/managing-schemas/migrations/managing#remove-a-migration) command. `migrations remove` deletes the migration and ensures the snapshot is correctly reset. For more information, see [dotnet ef migrations remove](/ef/core/miscellaneous/cli/dotnet#dotnet-ef-migrations-remove).
 
@@ -122,7 +121,7 @@ See [Resetting all migrations](/ef/core/managing-schemas/migrations/managing?tab
 
 ## Applying migrations in production
 
-We recommend that production apps **not** call [Database.Migrate](/dotnet/api/microsoft.entityframeworkcore.relationaldatabasefacadeextensions.migrate#Microsoft_EntityFrameworkCore_RelationalDatabaseFacadeExtensions_Migrate_Microsoft_EntityFrameworkCore_Infrastructure_DatabaseFacade_) at application startup. `Migrate` shouldn't be called from an app that is deployed to a server farm. If the app is scaled out to multiple server instances, it's hard to ensure database schema updates don't happen from multiple servers or conflict with read/write access.
+We recommend that production apps **not** call [Database.Migrate](xref:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.Migrate%2A) at application startup. `Migrate` shouldn't be called from an app that is deployed to a server farm. If the app is scaled out to multiple server instances, it's hard to ensure database schema updates don't happen from multiple servers or conflict with read/write access.
 
 Database migration should be done as part of deployment, and in a controlled way. Production database migration approaches include:
 
@@ -155,9 +154,9 @@ The next tutorial builds out the data model, adding entity properties and new en
 > [Previous tutorial](xref:data/ef-rp/sort-filter-page)
 > [Next tutorial](xref:data/ef-rp/complex-data-model)
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-3.0"
+:::moniker range="< aspnetcore-3.0"
 
 In this tutorial, the EF Core migrations feature for managing data model changes is used.
 
@@ -190,7 +189,7 @@ Run `Get-Help about_EntityFrameworkCore` from the PMC to get help information.
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
-Open a command window and navigate to the project folder. The project folder contains the *Startup.cs* file.
+Open a command window and navigate to the project folder. The project folder contains the `Startup.cs` file.
 
 Enter the following in the command window:
 
@@ -241,7 +240,7 @@ Previously the DB was dropped and doesn't exist, so migrations creates the new D
 
 ### The data model snapshot
 
-Migrations create a *snapshot* of the current database schema in *Migrations/SchoolContextModelSnapshot.cs*. When you add a migration, EF determines what changed by comparing the data model to the snapshot file.
+Migrations create a *snapshot* of the current database schema in `Migrations/SchoolContextModelSnapshot.cs`. When you add a migration, EF determines what changed by comparing the data model to the snapshot file.
 
 To delete a migration, use the following command:
 
@@ -286,7 +285,7 @@ Run the app and verify that everything works.
 
 ## Applying migrations in production
 
-We recommend production apps should **not** call [Database.Migrate](/dotnet/api/microsoft.entityframeworkcore.relationaldatabasefacadeextensions.migrate#Microsoft_EntityFrameworkCore_RelationalDatabaseFacadeExtensions_Migrate_Microsoft_EntityFrameworkCore_Infrastructure_DatabaseFacade_) at application startup. `Migrate` shouldn't be called from an app in server farm. For example, if the app has been cloud deployed with scale-out (multiple instances of the app are running).
+We recommend production apps should **not** call [Database.Migrate](xref:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.Migrate%2A) at application startup. `Migrate` shouldn't be called from an app in server farm. For example, if the app has been cloud deployed with scale-out (multiple instances of the app are running).
 
 Database migration should be done as part of deployment, and in a controlled way. Production database migration approaches include:
 
@@ -298,7 +297,7 @@ EF Core uses the `__MigrationsHistory` table to see if any migrations need to ru
 ## Troubleshooting
 
 Download the [completed app](
-https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples/cu21snapshots/cu-part4-migrations).
+https://github.com/dotnet/AspNetCore.Docs/tree/main/aspnetcore/data/ef-rp/intro/samples/cu21snapshots/part-4-migrations).
 
 The app generates the following exception:
 
@@ -322,4 +321,4 @@ Solution: Run `dotnet ef database update`
 > [Previous](xref:data/ef-rp/sort-filter-page)
 > [Next](xref:data/ef-rp/complex-data-model)
 
-::: moniker-end
+:::moniker-end

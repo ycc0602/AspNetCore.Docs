@@ -1,23 +1,17 @@
+items:
 - name: What's new
   href: index.yml
   expanded: true
   items:
-    - name: 2021
-      expanded: true
-      items:
-      - name: April
-        href: 2021-04-01.md
-      - name: March
-        href: 2021-03.md
-      - name: February
-        href: 2021-02.md
-      - name: January
-        href: 2021-01.md
-    - name: 2020
-      expanded: true
-      items:
-      - name: December
-        href: 2020-12.md
-      - name: November
-        href: 2020-11.md
-
+  - name: June 2022
+    href: dotnet-AspNetCore.Docs-2022-04-01.md
+  - name: March 2022
+    href: dotnet-AspNetCore.Docs-2022-03-01.md
+  - name: February 2022
+    href: dotnet-AspNetCore.Docs-2022-02-01.md
+  - name: January 2022
+    href: dotnet-AspNetCore.Docs-2022-01-01.md
+  - name: December 2021
+    href: dotnet-AspNetCore.Docs-2021-12-01.md
+  - name: November 2021
+    href: 21-11.md

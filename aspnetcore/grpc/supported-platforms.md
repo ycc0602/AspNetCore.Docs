@@ -5,7 +5,6 @@ description: Learn about the supported platforms for gRPC on .NET.
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.date: 3/11/2021
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/supported-platforms
 ---
 # gRPC on .NET supported platforms
@@ -54,12 +53,9 @@ All built-in ASP.NET Core servers are supported.
 > * Kestrel
 > * TestServer
 > * IIS&dagger;
-> * HTTP.sys&Dagger;
+> * HTTP.sys&dagger;
 
-&dagger;IIS requires .NET 5 and Windows 10 Build 20300.1000 or later.  
-&Dagger;HTTP.sys requires .NET 5 and Windows 10 Build 19529 or later.
-
-The preceding Windows 10 Build versions may require the use of a [Windows Insider](https://insider.windows.com) build.
+&dagger;Requires .NET 5 and Windows 11 Build 22000 or Windows Server 2022 Build 20348 or later.
 
 For information about configuring ASP.NET Core servers to run gRPC, see <xref:grpc/aspnetcore#server-options>.
 
@@ -68,9 +64,12 @@ For information about configuring ASP.NET Core servers to run gRPC, see <xref:gr
 > [!div class="checklist"]
 >
 > * [Azure Kubernetes Service (AKS)](https://azure.microsoft.com/services/kubernetes-service/)
+> * [Azure Container Apps](https://azure.microsoft.com/services/container-apps/)
 > * [Azure App Service](https://azure.microsoft.com/services/app-service/)&dagger;
 
-&dagger;Azure App Service doesn't support hosting gRPC over HTTP/2. gRPC-Web is a compatible alternative.
+&dagger;Azure App Service doesn't support hosting gRPC over HTTP/2 everywhere. Support is currently experimental. gRPC-Web is a compatible alternative that's available everywhere.
+
+See [How-to deploy a .NET 6 gRPC app on App Service](https://github.com/Azure/app-service-linux-docs/blob/master/HowTo/gRPC/use_gRPC_with_dotnet.md) for Azure App Service deployment information. This page discusses deploying gRPC that uses HTTP/2 to App Service which is experimental and not available in all Azure data centers.
 
 Work is in-progress to improve support for gRPC with HTTP/2 in Azure App Service. For more information, see [this GitHub issue](https://github.com/dotnet/AspNetCore/issues/9020).
 
@@ -95,9 +94,12 @@ The following table lists .NET implementations and their gRPC client support:
 | Universal Windows Platform 10.0.16299        | ❌                | ✔️         |
 | Unity 2018.1                                 | ❌                | ✔️         |
 
-&dagger;.NET Framework requires <xref:System.Net.Http.WinHttpHandler> to be configured and Windows 10 Build 19622 or later, which may require the use of a [Windows Insider](https://insider.windows.com) build.
+&dagger;.NET Framework requires configuration of <xref:System.Net.Http.WinHttpHandler> and Windows 11 or later.
 
 Using `Grpc.Net.Client` on .NET Framework or with gRPC-Web requires additional configuration. For more information, see <xref:grpc/netstandard>.
+
+> [!IMPORTANT]
+> gRPC-Web requires the client ***and*** server to support it. gRPC-Web can be [quickly configured by an ASP.NET Core gRPC server](xref:grpc/browser#configure-grpc-web-in-aspnet-core). Other gRPC server implementations require a proxy to support gRPC-Web.
 
 ## Additional resources
 

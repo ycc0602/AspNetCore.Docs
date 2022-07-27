@@ -1,24 +1,37 @@
 ---
-title: Introduction to ASP.NET Core Blazor
+title: ASP.NET Core Blazor
 author: guardrex
 description: Explore ASP.NET Core Blazor, a way to build interactive client-side web UI with .NET in an ASP.NET Core app.
 monikerRange: '>= aspnetcore-3.1'
 ms.author: riande
-ms.custom: "mvc, seoapril2019, devx-track-js"
-ms.date: 09/25/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+ms.custom: "mvc, seoapril2019"
+ms.date: 02/10/2022
 uid: blazor/index
 ---
-# Introduction to ASP.NET Core Blazor
+# ASP.NET Core Blazor
 
 *Welcome to Blazor!*
 
 Blazor is a framework for building interactive client-side web UI with [.NET](/dotnet/standard/tour):
 
+:::moniker range=">= aspnetcore-6.0"
+
 * Create rich interactive UIs using [C#](/dotnet/csharp/) instead of [JavaScript](https://www.javascript.com).
 * Share server-side and client-side app logic written in .NET.
 * Render the UI as HTML and CSS for wide browser support, including mobile browsers.
 * Integrate with modern hosting platforms, such as [Docker](/dotnet/standard/microservices-architecture/container-docker-introduction/index).
+* Build hybrid desktop and mobile apps with .NET and Blazor.
+
+:::moniker-end
+
+:::moniker range="< aspnetcore-6.0"
+
+* Create rich interactive UIs using [C#](/dotnet/csharp/) instead of [JavaScript](https://www.javascript.com).
+* Share server-side and client-side app logic written in .NET.
+* Render the UI as HTML and CSS for wide browser support, including mobile browsers.
+* Integrate with modern hosting platforms, such as [Docker](/dotnet/standard/microservices-architecture/container-docker-introduction/index).
+
+:::moniker-end
 
 Using .NET for client-side web development offers the following advantages:
 
@@ -26,8 +39,11 @@ Using .NET for client-side web development offers the following advantages:
 * Leverage the existing .NET ecosystem of [.NET libraries](/dotnet/standard/class-libraries).
 * Share app logic across server and client.
 * Benefit from .NET's performance, reliability, and security.
-* Stay productive with [Visual Studio](https://visualstudio.microsoft.com) on Windows, Linux, and macOS.
+* Stay productive on Windows, Linux, or macOS with a development environment, such as [Visual Studio](https://visualstudio.microsoft.com/) or [Visual Studio Code](https://code.visualstudio.com/).
 * Build on a common set of languages, frameworks, and tools that are stable, feature-rich, and easy to use.
+
+> [!NOTE]
+> For a Blazor quick start tutorial, see [Build your first Blazor app](https://dotnet.microsoft.com/learn/aspnet/blazor-tutorial/intro).
 
 ## Components
 
@@ -40,7 +56,7 @@ Components are .NET C# classes built into [.NET assemblies](/dotnet/standard/ass
 * Can be nested and reused.
 * Can be shared and distributed as [Razor class libraries](xref:razor-pages/ui-class) or [NuGet packages](/nuget/what-is-nuget).
 
-The component class is usually written in the form of a [Razor](xref:mvc/views/razor) markup page with a `.razor` file extension. Components in Blazor are formally referred to as *Razor components*. Razor is a syntax for combining HTML markup with C# code designed for developer productivity. Razor allows you to switch between HTML markup and C# in the same file with [IntelliSense](/visualstudio/ide/using-intellisense) programming support in Visual Studio. Razor Pages and MVC also use Razor. Unlike Razor Pages and MVC, which are built around a request/response model, components are used specifically for client-side UI logic and composition.
+The component class is usually written in the form of a [Razor](xref:mvc/views/razor) markup page with a `.razor` file extension. Components in Blazor are formally referred to as *Razor components*, informally as *Blazor components*. Razor is a syntax for combining HTML markup with C# code designed for developer productivity. Razor allows you to switch between HTML markup and C# in the same file with [IntelliSense](/visualstudio/ide/using-intellisense) programming support in Visual Studio. Razor Pages and MVC also use Razor. Unlike Razor Pages and MVC, which are built around a request/response model, components are used specifically for client-side UI logic and composition.
 
 Blazor uses natural HTML tags for UI composition. The following Razor markup demonstrates a component (`Dialog.razor`) that displays a dialog and processes an event when the user selects a button:
 
@@ -55,10 +71,10 @@ Blazor uses natural HTML tags for UI composition. The following Razor markup dem
 
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     private void OnYes()
     {
@@ -87,9 +103,33 @@ The `Dialog` component is nested within another component using an HTML tag. In 
 
 The dialog is rendered when the `Index` component is accessed in a browser. When the button is selected by the user, the browser's developer tools console shows the message written by the `OnYes` method:
 
-![Dialog component rendered in the browser nested inside of the Index component. The browser developer tools console shows the message written by C# code when the user selects the Yes! button in the UI.](index/_static/dialog.png)
+![Dialog component rendered in the browser nested inside of the Index component. The browser developer tools console shows the message written by C# code when the user selects the Yes! button in the UI.](~/blazor/index/_static/dialog.png)
 
 Components render into an in-memory representation of the browser's [Document Object Model (DOM)](https://developer.mozilla.org/docs/Web/API/Document_Object_Model/Introduction) called a *render tree*, which is used to update the UI in a flexible and efficient way.
+
+## Blazor Server
+
+Blazor Server provides support for hosting Razor components on the server in an ASP.NET Core app. UI updates are handled over a [SignalR](xref:signalr/introduction) connection.
+
+The runtime stays on the server and handles:
+
+* Executing the app's C# code.
+* Sending UI events from the browser to the server.
+* Applying UI updates to a rendered component that are sent back by the server.
+
+The connection used by Blazor Server to communicate with the browser is also used to handle JavaScript interop calls.
+
+![Blazor Server runs .NET code on the server and interacts with the Document Object Model on the client over a SignalR connection](~/blazor/index/_static/blazor-server.png)
+
+Blazor Server apps render content differently than traditional models for rendering UI in ASP.NET Core apps using Razor views or Razor Pages. Both models use the [Razor language](xref:mvc/views/razor) to describe HTML content for rendering, but they significantly differ in *how* markup is rendered.
+
+When a Razor Page or view is rendered, every line of Razor code emits HTML in text form. After rendering, the server disposes of the page or view instance, including any state that was produced. When another request for the page occurs, the entire page is rerendered to HTML again and sent to the client.
+
+Blazor Server produces a graph of components to display similar to an HTML or XML Document Object Model (DOM). The component graph includes state held in properties and fields. Blazor evaluates the component graph to produce a binary representation of the markup, which is sent to the client for rendering. After the connection is made between the client and the server, the component's static prerendered elements are replaced with interactive elements. Prerendering the content on the server makes the app feel more responsive on the client.
+
+After the components are interactive on the client, UI updates are triggered by user interaction and app events. When an update occurs, the component graph is rerendered, and a UI *diff* (difference) is calculated. This diff is the smallest set of DOM edits required to update the UI on the client. The diff is sent to the client in a binary format and applied by the browser.
+
+A component is disposed after the user navigates away from the component.
 
 ## Blazor WebAssembly
 
@@ -99,7 +139,7 @@ Running .NET code inside web browsers is made possible by [WebAssembly](https://
 
 WebAssembly code can access the full functionality of the browser via JavaScript, called *JavaScript interoperability*, often shortened to *JavaScript interop* or *JS interop*. .NET code executed via WebAssembly in the browser runs in the browser's JavaScript sandbox with the protections that the sandbox provides against malicious actions on the client machine.
 
-![Blazor WebAssembly runs .NET code in the browser with WebAssembly.](index/_static/blazor-webassembly.png)
+![Blazor WebAssembly runs .NET code in the browser with WebAssembly.](~/blazor/index/_static/blazor-webassembly.png)
 
 When a Blazor WebAssembly app is built and run in a browser:
 
@@ -109,35 +149,26 @@ When a Blazor WebAssembly app is built and run in a browser:
 
 The size of the published app, its *payload size*, is a critical performance factor for an app's usability. A large app takes a relatively long time to download to a browser, which diminishes the user experience. Blazor WebAssembly optimizes payload size to reduce download times:
 
-::: moniker range=">= aspnetcore-5.0"
-
 * Unused code is stripped out of the app when it's published by the [Intermediate Language (IL) Trimmer](xref:blazor/host-and-deploy/configure-trimmer).
 * HTTP responses are compressed.
 * The .NET runtime and assemblies are cached in the browser.
 
-::: moniker-end
+:::moniker range=">= aspnetcore-6.0"
 
-::: moniker range="< aspnetcore-5.0"
+## Blazor Hybrid
 
-* Unused code is stripped out of the app when it's published by the [Intermediate Language (IL) Linker](xref:blazor/host-and-deploy/configure-linker).
-* HTTP responses are compressed.
-* The .NET runtime and assemblies are cached in the browser.
+Hybrid apps use a blend of native and web technologies. A *Blazor Hybrid* app uses Blazor in a native client app. Razor components run natively in the .NET process and render web UI to an embedded Web View control using a local interop channel. WebAssembly isn't used in Hybrid apps. Hybrid apps encompass the following technologies:
 
-::: moniker-end
+* [.NET Multi-platform App UI (.NET MAUI)](/dotnet/maui/what-is-maui): A cross-platform framework for creating native mobile and desktop apps with C# and XAML.
+* [Windows Presentation Foundation (WPF)](/dotnet/desktop/wpf/overview/): A UI framework that is resolution-independent and uses a vector-based rendering engine, built to take advantage of modern graphics hardware. 
+* [Windows Forms](/dotnet/desktop/winforms/overview/): A UI framework that creates rich desktop client apps for Windows. The Windows Forms development platform supports a broad set of app development features, including controls, graphics, data binding, and user input.
 
-## Blazor Server
+For more information on creating Blazor Hybrid apps with the preceding frameworks, see the following articles:
 
-Blazor decouples component rendering logic from how UI updates are applied. *Blazor Server* provides support for hosting Razor components on the server in an ASP.NET Core app. UI updates are handled over a [SignalR](xref:signalr/introduction) connection.
+* <xref:blazor/hosting-models>
+* <xref:blazor/hybrid/index>
 
-The runtime stays on the server and handles:
-
-* Executing the app's C# code.
-* Sending UI events from the browser to the server.
-* Applying UI updates to the rendered component that are sent back by the server.
-
-The connection used by Blazor Server to communicate with the browser is also used to handle JavaScript interop calls.
-
-![Blazor Server runs .NET code on the server and interacts with the Document Object Model on the client over a SignalR connection](index/_static/blazor-server.png)
+:::moniker-end
 
 ## JavaScript interop
 
@@ -153,10 +184,12 @@ APIs that aren't applicable inside of a web browser (for example, accessing the 
 
 * [WebAssembly](https://webassembly.org)
 * <xref:blazor/hosting-models>
-* <xref:tutorials/signalr-blazor>
+* <xref:blazor/tutorials/signalr-blazor>
 * <xref:blazor/js-interop/call-javascript-from-dotnet>
 * <xref:blazor/js-interop/call-dotnet-from-javascript>
+* [mono/mono GitHub repository](https://github.com/mono/mono)
 * [C# Guide](/dotnet/csharp/)
 * <xref:mvc/views/razor>
 * [HTML](https://www.w3.org/html/)
 * [Awesome Blazor](https://github.com/AdrienTorris/awesome-blazor) community links
+* [Blazor samples GitHub repository (`dotnet/blazor-samples`)](https://github.com/dotnet/blazor-samples)

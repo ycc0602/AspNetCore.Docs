@@ -6,14 +6,13 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: riande
 ms.custom: mvc
 ms.date: 02/07/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: test/troubleshoot-azure-iis
 ---
 # Troubleshoot ASP.NET Core on Azure App Service and IIS
 
 By [Justin Kotalik](https://github.com/jkotalik)
 
-::: moniker range=">= aspnetcore-3.0"
+:::moniker range=">= aspnetcore-3.0"
 
 This article provides information on common app startup errors and instructions on how to diagnose errors when an app is deployed to Azure App Service or IIS:
 
@@ -34,7 +33,7 @@ Lists additional troubleshooting topics.
 
 ## App startup errors
 
-In Visual Studio, an ASP.NET Core project defaults to [IIS Express](/iis/extensions/introduction-to-iis-express/iis-express-overview) hosting during debugging. A *502.5 - Process Failure* or a *500.30 - Start Failure* that occurs when debugging locally can be diagnosed using the advice in this topic.
+In Visual Studio, the ASP.NET Core project default server is Kestrel. Visual studio can be configured to use [IIS Express](/iis/extensions/introduction-to-iis-express/iis-express-overview). A *502.5 - Process Failure* or a *500.30 - Start Failure* that occurs when debugging locally with IIS Express can be diagnosed using the advice in this topic.
 
 ### 403.14 Forbidden
 
@@ -66,6 +65,8 @@ For more information on the layout of a published ASP.NET Core app, see <xref:ho
 The app starts, but an error prevents the server from fulfilling the request.
 
 This error occurs within the app's code during startup or while creating a response. The response may contain no content, or the response may appear as a *500 Internal Server Error* in the browser. The Application Event Log usually states that the app started normally. From the server's perspective, that's correct. The app did start, but it can't generate a valid response. Run the app at a command prompt on the server or enable the ASP.NET Core Module stdout log to troubleshoot the problem.
+
+This error also may occur when the .NET Core Hosting Bundle isn't installed or is corrupted. Installing or repairing the installation of the .NET Core Hosting Bundle (for IIS) or Visual Studio (for IIS Express) may fix the problem.
 
 ### 500.0 In-Process Handler Load Failure
 
@@ -223,7 +224,7 @@ An alternative to using the **Diagnose and solve problems** blade is to examine 
 1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
 1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
 1. Open the **LogFiles** folder.
-1. Select the pencil icon next to the *eventlog.xml* file.
+1. Select the pencil icon next to the `eventlog.xml` file.
 1. Examine the log. Scroll to the bottom of the log to see the most recent events.
 
 ### Run the app in the Kudu console
@@ -312,11 +313,11 @@ For more information, see <xref:host-and-deploy/aspnet-core-module#log-creation-
 The ASP.NET Core Module debug log provides additional, deeper logging from the ASP.NET Core Module. To enable and view stdout logs:
 
 1. To enable the enhanced diagnostic log, perform either of the following:
-   * Follow the instructions in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs) to configure the app for an enhanced diagnostic logging. Redeploy the app.
-   * Add the `<handlerSettings>` shown in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs) to the live app's *web.config* file using the Kudu console:
+   * Follow the instructions in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs) to configure the app for an enhanced diagnostic logging. Redeploy the app.
+   * Add the `<handlerSettings>` shown in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs) to the live app's *web.config* file using the Kudu console:
      1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
      1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
-     1. Open the folders to the path **site** > **wwwroot**. Edit the *web.config* file by selecting the pencil button. Add the `<handlerSettings>` section as shown in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs). Select the **Save** button.
+     1. Open the folders to the path **site** > **wwwroot**. Edit the *web.config* file by selecting the pencil button. Add the `<handlerSettings>` section as shown in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs). Select the **Save** button.
 1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
 1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
 1. Open the folders to the path **site** > **wwwroot**. If you didn't supply a path for the *aspnetcore-debug.log* file, the file appears in the list. If you supplied a path, navigate to the location of the log file.
@@ -329,7 +330,7 @@ To disable the enhanced debug log, perform either of the following:
 * Remove the `<handlerSettings>` from the *web.config* file locally and redeploy the app.
 * Use the Kudu console to edit the *web.config* file and remove the `<handlerSettings>` section. Save the file.
 
-For more information, see <xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs>.
+For more information, see <xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs>.
 
 > [!WARNING]
 > Failure to disable the debug log can lead to app or server failure. There's no limit on log file size. Only use debug logging to troubleshoot app startup problems.
@@ -338,10 +339,7 @@ For more information, see <xref:host-and-deploy/aspnet-core-module#enhanced-diag
 
 ### Slow or hanging app (Azure App Service)
 
-When an app responds slowly or hangs on a request, see the following articles:
-
-* [Troubleshoot slow web app performance issues in Azure App Service](/azure/app-service/app-service-web-troubleshoot-performance-degradation)
-* [Use Crash Diagnoser Site Extension to Capture Dump for Intermittent Exception issues or performance issues on Azure Web App](https://blogs.msdn.microsoft.com/asiatech/2015/12/28/use-crash-diagnoser-site-extension-to-capture-dump-for-intermittent-exception-issues-or-performance-issues-on-azure-web-app/)
+When an app responds slowly or hangs on a request, see [Troubleshoot slow web app performance issues in Azure App Service](/azure/app-service/app-service-web-troubleshoot-performance-degradation).
 
 ### Monitoring blades
 
@@ -463,7 +461,7 @@ Add the following handler settings to the app's *web.config* file to enable ASP.
 
 Confirm that the path specified for the log exists and that the app pool's identity has write permissions to the location.
 
-For more information, see <xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs>.
+For more information, see <xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs>.
 
 ### Enable the Developer Exception Page
 
@@ -550,6 +548,7 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 
 ## Additional resources
 
+* <xref:test/debug-aspnetcore-source>
 * <xref:test/troubleshoot>
 * <xref:host-and-deploy/azure-iis-errors-reference>
 * <xref:fundamentals/error-handling>
@@ -566,7 +565,6 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 * [Troubleshoot slow web app performance issues in Azure App Service](/azure/app-service/app-service-web-troubleshoot-performance-degradation)
 * [Application performance FAQs for Web Apps in Azure](/azure/app-service/app-service-web-availability-performance-application-issues-faq)
 * [Azure Web App sandbox (App Service runtime execution limitations)](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox)
-* [Azure Friday: Azure App Service Diagnostic and Troubleshooting Experience (12-minute video)](https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience)
 
 ### Visual Studio documentation
 
@@ -578,9 +576,9 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 
 * [Debugging with Visual Studio Code](https://code.visualstudio.com/docs/editor/debugging)
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="= aspnetcore-2.2"
+:::moniker range="= aspnetcore-2.2"
 
 This article provides information on common app startup errors and instructions on how to diagnose errors when an app is deployed to Azure App Service or IIS:
 
@@ -633,6 +631,8 @@ For more information on the layout of a published ASP.NET Core app, see <xref:ho
 The app starts, but an error prevents the server from fulfilling the request.
 
 This error occurs within the app's code during startup or while creating a response. The response may contain no content, or the response may appear as a *500 Internal Server Error* in the browser. The Application Event Log usually states that the app started normally. From the server's perspective, that's correct. The app did start, but it can't generate a valid response. Run the app at a command prompt on the server or enable the ASP.NET Core Module stdout log to troubleshoot the problem.
+
+This error also may occur when the .NET Core Hosting Bundle isn't installed or is corrupted. Installing or repairing the installation of the .NET Core Hosting Bundle (for IIS) or Visual Studio (for IIS Express) may fix the problem.
 
 ### 500.0 In-Process Handler Load Failure
 
@@ -708,7 +708,7 @@ An alternative to using the **Diagnose and solve problems** blade is to examine 
 1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
 1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
 1. Open the **LogFiles** folder.
-1. Select the pencil icon next to the *eventlog.xml* file.
+1. Select the pencil icon next to the `eventlog.xml` file.
 1. Examine the log. Scroll to the bottom of the log to see the most recent events.
 
 ### Run the app in the Kudu console
@@ -805,11 +805,11 @@ For more information, see <xref:host-and-deploy/aspnet-core-module#log-creation-
 The ASP.NET Core Module debug log provides additional, deeper logging from the ASP.NET Core Module. To enable and view stdout logs:
 
 1. To enable the enhanced diagnostic log, perform either of the following:
-   * Follow the instructions in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs) to configure the app for an enhanced diagnostic logging. Redeploy the app.
-   * Add the `<handlerSettings>` shown in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs) to the live app's *web.config* file using the Kudu console:
+   * Follow the instructions in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs) to configure the app for an enhanced diagnostic logging. Redeploy the app.
+   * Add the `<handlerSettings>` shown in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs) to the live app's *web.config* file using the Kudu console:
      1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
      1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
-     1. Open the folders to the path **site** > **wwwroot**. Edit the *web.config* file by selecting the pencil button. Add the `<handlerSettings>` section as shown in [Enhanced diagnostic logs](xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs). Select the **Save** button.
+     1. Open the folders to the path **site** > **wwwroot**. Edit the *web.config* file by selecting the pencil button. Add the `<handlerSettings>` section as shown in [Enhanced diagnostic logs](xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs). Select the **Save** button.
 1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
 1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
 1. Open the folders to the path **site** > **wwwroot**. If you didn't supply a path for the *aspnetcore-debug.log* file, the file appears in the list. If you supplied a path, navigate to the location of the log file.
@@ -822,7 +822,7 @@ To disable the enhanced debug log, perform either of the following:
 * Remove the `<handlerSettings>` from the *web.config* file locally and redeploy the app.
 * Use the Kudu console to edit the *web.config* file and remove the `<handlerSettings>` section. Save the file.
 
-For more information, see <xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs>.
+For more information, see <xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs>.
 
 > [!WARNING]
 > Failure to disable the debug log can lead to app or server failure. There's no limit on log file size. Only use debug logging to troubleshoot app startup problems.
@@ -956,7 +956,7 @@ Add the following handler settings to the app's *web.config* file to enable ASP.
 
 Confirm that the path specified for the log exists and that the app pool's identity has write permissions to the location.
 
-For more information, see <xref:host-and-deploy/aspnet-core-module#enhanced-diagnostic-logs>.
+For more information, see <xref:host-and-deploy/iis/logging-and-diagnostics#enhanced-diagnostic-logs>.
 
 ### Enable the Developer Exception Page
 
@@ -1059,7 +1059,6 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 * [Troubleshoot slow web app performance issues in Azure App Service](/azure/app-service/app-service-web-troubleshoot-performance-degradation)
 * [Application performance FAQs for Web Apps in Azure](/azure/app-service/app-service-web-availability-performance-application-issues-faq)
 * [Azure Web App sandbox (App Service runtime execution limitations)](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox)
-* [Azure Friday: Azure App Service Diagnostic and Troubleshooting Experience (12-minute video)](https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience)
 
 ### Visual Studio documentation
 
@@ -1071,9 +1070,9 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 
 * [Debugging with Visual Studio Code](https://code.visualstudio.com/docs/editor/debugging)
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-2.2"
+:::moniker range="< aspnetcore-2.2"
 
 This article provides information on common app startup errors and instructions on how to diagnose errors when an app is deployed to Azure App Service or IIS:
 
@@ -1126,6 +1125,8 @@ For more information on the layout of a published ASP.NET Core app, see <xref:ho
 The app starts, but an error prevents the server from fulfilling the request.
 
 This error occurs within the app's code during startup or while creating a response. The response may contain no content, or the response may appear as a *500 Internal Server Error* in the browser. The Application Event Log usually states that the app started normally. From the server's perspective, that's correct. The app did start, but it can't generate a valid response. Run the app at a command prompt on the server or enable the ASP.NET Core Module stdout log to troubleshoot the problem.
+
+This error also may occur when the .NET Core Hosting Bundle isn't installed or is corrupted. Installing or repairing the installation of the .NET Core Hosting Bundle (for IIS) or Visual Studio (for IIS Express) may fix the problem.
 
 ### 502.5 Process Failure
 
@@ -1186,7 +1187,7 @@ An alternative to using the **Diagnose and solve problems** blade is to examine 
 1. Open **Advanced Tools** in the **Development Tools** area. Select the **Go&rarr;** button. The Kudu console opens in a new browser tab or window.
 1. Using the navigation bar at the top of the page, open **Debug console** and select **CMD**.
 1. Open the **LogFiles** folder.
-1. Select the pencil icon next to the *eventlog.xml* file.
+1. Select the pencil icon next to the `eventlog.xml` file.
 1. Examine the log. Scroll to the bottom of the log to see the most recent events.
 
 ### Run the app in the Kudu console
@@ -1490,7 +1491,6 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 * [Troubleshoot slow web app performance issues in Azure App Service](/azure/app-service/app-service-web-troubleshoot-performance-degradation)
 * [Application performance FAQs for Web Apps in Azure](/azure/app-service/app-service-web-availability-performance-application-issues-faq)
 * [Azure Web App sandbox (App Service runtime execution limitations)](https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox)
-* [Azure Friday: Azure App Service Diagnostic and Troubleshooting Experience (12-minute video)](https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience)
 
 ### Visual Studio documentation
 
@@ -1502,4 +1502,4 @@ A functioning app may fail immediately after upgrading either the .NET Core SDK 
 
 * [Debugging with Visual Studio Code](https://code.visualstudio.com/docs/editor/debugging)
 
-::: moniker-end
+:::moniker-end

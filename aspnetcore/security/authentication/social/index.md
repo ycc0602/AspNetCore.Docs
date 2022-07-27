@@ -1,11 +1,10 @@
 ---
-title: Facebook, Google, and external provider authentication in ASP.NET Core
+title: Facebook and Google authentication in ASP.NET Core
 author: rick-anderson
-description: This tutorial demonstrates how to build an ASP.NET Core app using OAuth 2.0 with external authentication providers.
+description: Create an ASP.NET Core app using OAuth 2.0 with external authentication providers such as Facebook, Twitter, Google, and Microsoft.
 ms.author: riande
 ms.custom: mvc
-ms.date: 01/23/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 03/07/2022
 uid: security/authentication/social/index
 ---
 # Facebook, Google, and external provider authentication in ASP.NET Core
@@ -21,18 +20,12 @@ Enabling users to sign in with their existing credentials:
 * Is convenient for the users.
 * Shifts many of the complexities of managing the sign-in process onto a third party.
 
-For examples of how social logins can drive traffic and customer conversions, see case studies by [Facebook](https://www.facebook.com/unsupportedbrowser) and [Twitter](https://dev.twitter.com/resources/case-studies).
-
 ## Create a New ASP.NET Core Project
 
 # [Visual Studio](#tab/visual-studio)
 
-* Create a new project.
-* Select **ASP.NET Core Web Application** and **Next**.
-* Provide a **Project name** and confirm or change the **Location**. Select **Create**.
-* Select the latest version of ASP.NET Core in the drop-down (**ASP.NET Core {X.Y}**), and then select **Web Application**.
-* Under **Authentication**, select **Change** and set the authentication to **Individual User Accounts**. Select **OK**.
-* In the **Create a new ASP.NET Core Web Application** window, select **Create**.
+* Select the **ASP.NET Core Web App** template. Select **OK**.
+* In the **Authentication type** input,  select  **Individual User Accounts**.
 
 # [Visual Studio Code / Visual Studio for Mac](#tab/visual-studio-code+visual-studio-mac)
 
@@ -69,7 +62,7 @@ For examples of how social logins can drive traffic and customer conversions, se
 
 ## Use SecretManager to store tokens assigned by login providers
 
-Social login providers assign **Application Id** and **Application Secret** tokens during the registration process. The exact token names vary by provider. These tokens represent the credentials your app uses to access their API. The tokens constitute the "user secrets" that can be linked to your app configuration with the help of [Secret Manager](xref:security/app-secrets#secret-manager). User secrets are a more secure alternative to storing the tokens in a configuration file, such as *appsettings.json*.
+Social login providers assign **Application Id** and **Application Secret** tokens during the registration process. The exact token names vary by provider. These tokens represent the credentials your app uses to access their API. The tokens constitute the "user secrets" that can be linked to your app configuration with the help of [Secret Manager](xref:security/app-secrets#secret-manager). User secrets are a more secure alternative to storing the tokens in a configuration file, such as `appsettings.json`.
 
 > [!IMPORTANT]
 > Secret Manager is for development purposes only. You can store and protect Azure test and production secrets with the [Azure Key Vault configuration provider](xref:security/key-vault-configuration).
@@ -86,7 +79,7 @@ Use the following topics to configure your application to use the respective pro
 * [Microsoft](xref:security/authentication/microsoft-logins) instructions
 * [Other provider](xref:security/authentication/otherlogins) instructions
 
-[!INCLUDE[](includes/chain-auth-providers.md)]
+[!INCLUDE[](includes/chain-auth-providers6.md)]
 
 ## Optionally set password
 

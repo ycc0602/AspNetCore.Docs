@@ -2,14 +2,15 @@
 title: Configure the Linker for ASP.NET Core Blazor
 author: guardrex
 description: Learn how to control the Intermediate Language (IL) Linker when building a Blazor app.
-monikerRange: '>= aspnetcore-3.1 < aspnetcore-5.0'
+monikerRange: '= aspnetcore-3.1'
 ms.author: riande
 ms.custom: mvc
-ms.date: 05/19/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
+ms.date: 11/09/2021
 uid: blazor/host-and-deploy/configure-linker
 ---
 # Configure the Linker for ASP.NET Core Blazor
+
+This article explains how to control the Intermediate Language (IL) Linker when building a Blazor app.
 
 Blazor WebAssembly performs [Intermediate Language (IL)](/dotnet/standard/managed-code#intermediate-language--execution) linking during a build to trim unnecessary IL from the app's output assemblies. The linker is disabled when building in Debug configuration. Apps must build in Release configuration to enable the linker. We recommend building in Release when deploying your Blazor WebAssembly apps. 
 
@@ -74,7 +75,7 @@ Control linking on a per-assembly basis by providing an XML configuration file a
 </linker>
 ```
 
-For more information and examples, see [Data Formats (mono/linker GitHub repository)](https://github.com/mono/linker/blob/main/docs/data-formats.md).
+For more information and examples, see [Data Formats (dotnet/linker GitHub repository)](https://github.com/dotnet/linker/blob/main/docs/data-formats.md).
 
 ## Add an XML linker configuration file to a library
 
@@ -114,8 +115,8 @@ To control which I18N assemblies are retained, set the `<BlazorWebAssemblyI18NAs
 
 Use a comma to separate multiple values (for example, `mideast,west`).
 
-For more information, see [I18N: Pnetlib Internationalization Framework Library (mono/mono GitHub repository)](https://github.com/mono/mono/tree/master/mcs/class/I18N).
+For more information, see [I18N: Pnetlib Internationalization Framework Library (mono/mono GitHub repository)](https://github.com/mono/mono/tree/main/mcs/class/I18N).
 
 ## Additional resources
 
-* <xref:blazor/webassembly-performance-best-practices#intermediate-language-il-linking>
+* <xref:blazor/performance#intermediate-language-il-linking>

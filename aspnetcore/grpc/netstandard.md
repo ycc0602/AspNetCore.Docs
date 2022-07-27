@@ -5,7 +5,6 @@ description: Learn how to use the .NET gRPC client in apps and libraries that su
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.date: 3/11/2021
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/netstandard
 ---
 # Use gRPC client with .NET Standard 2.0
@@ -60,14 +59,18 @@ builder.Services
 
 For more information, see [Configure gRPC-Web with the .NET gRPC client](xref:grpc/browser#configure-grpc-web-with-the-net-grpc-client).
 
+> [!IMPORTANT]
+> gRPC-Web requires the client ***and*** server to support it. gRPC-Web can be [quickly configured by an ASP.NET Core gRPC server](xref:grpc/browser#configure-grpc-web-in-aspnet-core). Other gRPC server implementations require a proxy to support gRPC-Web.
+
 ## .NET Framework
 
 .NET Framework has limited support for gRPC over HTTP/2. To enable gRPC over HTTP/2 on .NET Framework, configure the channel to use <xref:System.Net.Http.WinHttpHandler>.
 
 Requirements and restrictions to using `WinHttpHandler`:
 
-* Windows 10 Build 19622 or later. May require the use of a [Windows Insider](https://insider.windows.com) build.
-* A reference to [`System.Net.Http.WinHttpHandler`](https://www.nuget.org/packages/System.Net.Http.WinHttpHandler/) version 6.0.0-preview.3.21201.4 or later.
+* Windows 11 or later, Windows Server 2022 or later.
+* A reference to [`System.Net.Http.WinHttpHandler`](https://www.nuget.org/packages/System.Net.Http.WinHttpHandler/) version 6.0.1 or later.
+* Configure `WinHttpHandler` on the channel using `GrpcChannelOptions.HttpHandler`.
 * .NET Framework 4.6.1 or later.
 * Only unary and server streaming gRPC calls are supported.
 * Only gRPC calls over TLS are supported.
@@ -81,12 +84,6 @@ var channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOp
 var client = new Greeter.GreeterClient(channel);
 var response = await client.SayHelloAsync(new HelloRequest { Name = ".NET" });
 ```
-
-> [!NOTE]
-> .NET Framework support is in its early stages and requires using pre-release software:
->
-> * Windows 10 Build 19622 or later is available as a [Windows Insider](https://insider.windows.com) build.
-> * [`System.Net.Http.WinHttpHandler`](https://www.nuget.org/packages/System.Net.Http.WinHttpHandler/) version 6.0.0-preview.3.21201.4 or later.
 
 ## gRPC C# core-library
 

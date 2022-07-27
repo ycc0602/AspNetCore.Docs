@@ -5,7 +5,6 @@ description: Tips for increasing performance in ASP.NET Core apps using ObjectPo
 monikerRange: '>= aspnetcore-1.1'
 ms.author: riande
 ms.date: 04/11/2019
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: performance/ObjectPool
 ---
 # Object reuse with ObjectPool in ASP.NET Core
@@ -29,9 +28,9 @@ Object pooling doesn't always improve performance:
 
 Use object pooling only after collecting performance data using realistic scenarios for your app or library.
 
-::: moniker range="< aspnetcore-3.0"
+:::moniker range="< aspnetcore-3.0"
 **WARNING: The `ObjectPool` doesn't implement `IDisposable`. We don't recommend using it with types that need disposal.** `ObjectPool` in ASP.NET Core 3.0 and later supports `IDisposable`.
-::: moniker-end
+:::moniker-end
 
 **NOTE: The ObjectPool doesn't place a limit on the number of objects that it will allocate, it places a limit on the number of objects it will retain.**
 
@@ -54,7 +53,7 @@ The ObjectPool can be used in an app in multiple ways:
 
 Call <xref:Microsoft.Extensions.ObjectPool.ObjectPool`1.Get*> to get an object and <xref:Microsoft.Extensions.ObjectPool.ObjectPool`1.Return*> to return the object.  There's no requirement that you return every object. If you don't return an object, it will be garbage collected.
 
-::: moniker range=">= aspnetcore-3.0"
+:::moniker range=">= aspnetcore-3.0"
 When <xref:Microsoft.Extensions.ObjectPool.DefaultObjectPoolProvider> is used and `T` implements `IDisposable`:
 
 * Items that are ***not*** returned to the pool will be disposed.
@@ -63,9 +62,9 @@ When <xref:Microsoft.Extensions.ObjectPool.DefaultObjectPoolProvider> is used an
 NOTE: After the pool is disposed:
 
 * Calling `Get` throws a `ObjectDisposedException`.
-* `return` disposes the given item.
+* Calling `Return` disposes the given item.
 
-::: moniker-end
+:::moniker-end
 
 ## ObjectPool sample
 

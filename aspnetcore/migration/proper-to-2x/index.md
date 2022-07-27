@@ -1,17 +1,20 @@
 ---
 title: Migrate from ASP.NET to ASP.NET Core
-author: isaac2004
+author: isaacrlevin
 description: Receive guidance for migrating existing ASP.NET MVC or Web API apps to ASP.NET Core.web
 ms.author: scaddie
 ms.date: 10/18/2019
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: migration/proper-to-2x/index
 ---
 # Migrate from ASP.NET to ASP.NET Core
 
 By [Isaac Levin](https://isaaclevin.com)
 
-This article serves as a reference guide for migrating ASP.NET apps to ASP.NET Core. See the ebook [Porting existing ASP.NET apps to .NET Core](https://aka.ms/aspnet-porting-ebook) for a comprehensive porting guide.
+This article serves as a reference guide for migrating ASP.NET apps to ASP.NET Core.
+
+The [.NET Upgrade Assistant](https://dotnet.microsoft.com/en-us/platform/upgrade-assistant) is a command-line tool that can help migrate ASP.NET to ASP.NET Core. For more information, see [Overview of the .NET Upgrade Assistant](/dotnet/architecture/porting-existing-aspnet-apps/) and [Upgrade an ASP.NET MVC app to .NET 6 with the .NET Upgrade Assistant](/dotnet/core/porting/upgrade-assistant-aspnetmvc).
+
+See the ebook [Porting existing ASP.NET apps to .NET Core](https://aka.ms/aspnet-porting-ebook) for a comprehensive porting guide.
 
 ## Prerequisites
 
@@ -35,7 +38,7 @@ When the metapackage is used, no packages referenced in the metapackage are depl
 
 ## Project structure differences
 
-The *.csproj* file format has been simplified in ASP.NET Core. Some notable changes include:
+The `.csproj` file format has been simplified in ASP.NET Core. Some notable changes include:
 
 - Explicit inclusion of files isn't necessary for them to be considered part of the project. This reduces the risk of XML merge conflicts when working on large teams.
 - There are no GUID-based references to other projects, which improves file readability.
@@ -55,7 +58,7 @@ This approach couples the application and the server to which it's deployed in a
 
 This configures your default routes, and defaults to XmlSerialization over Json. Add other Middleware to this pipeline as needed (loading services, configuration settings, static files, etc.).
 
-ASP.NET Core uses a similar approach, but doesn't rely on OWIN to handle the entry. Instead, that's done through the *Program.cs* `Main` method (similar to console applications) and `Startup` is loaded through there.
+ASP.NET Core uses a similar approach, but doesn't rely on OWIN to handle the entry. Instead, that's done through the `Program.cs` `Main` method (similar to console applications) and `Startup` is loaded through there.
 
 [!code-csharp[](samples/program.cs)]
 
@@ -83,11 +86,11 @@ Applications read these settings using the `ConfigurationManager.AppSettings` co
 
 [!code-csharp[](samples/read-webconfig.cs)]
 
-ASP.NET Core can store configuration data for the application in any file and load them as part of middleware bootstrapping. The default file used in the project templates is *appsettings.json*:
+ASP.NET Core can store configuration data for the application in any file and load them as part of middleware bootstrapping. The default file used in the project templates is `appsettings.json`:
 
 [!code-json[](samples/appsettings-sample.json)]
 
-Loading this file into an instance of `IConfiguration` inside your application is done in *Startup.cs*:
+Loading this file into an instance of `IConfiguration` inside your application is done in `Startup.cs`:
 
 [!code-csharp[](samples/startup-builder.cs)]
 
@@ -123,7 +126,7 @@ Inject `IProductRepository` where needed:
 
 [!code-csharp[](samples/sample5.cs)]
 
-Because Dependency Injection is part of ASP.NET Core, you can add your service in the `ConfigureServices` method of *Startup.cs*:
+Because Dependency Injection is part of ASP.NET Core, you can add your service in the `ConfigureServices` method of `Startup.cs`:
 
 [!code-csharp[](samples/configure-services.cs)]
 

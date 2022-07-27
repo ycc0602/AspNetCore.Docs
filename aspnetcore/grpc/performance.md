@@ -5,7 +5,6 @@ description: Learn the best practices for building high-performance gRPC service
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.date: 08/23/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/performance
 ---
 # Performance best practices with gRPC
@@ -41,7 +40,7 @@ HTTP/2 connections typically have a limit on the number of [maximum concurrent s
 
 A gRPC channel uses a single HTTP/2 connection, and concurrent calls are multiplexed on that connection. When the number of active calls reaches the connection stream limit, additional calls are queued in the client. Queued calls wait for active calls to complete before they are sent. Applications with high load, or long running streaming gRPC calls, could see performance issues caused by calls queuing because of this limit.
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-5.0"
 
 .NET 5 introduces the `SocketsHttpHandler.EnableMultipleHttp2Connections` property. When set to `true`, additional HTTP/2 connections are created by a channel when the concurrent stream limit is reached. When a `GrpcChannel` is created its internal `SocketsHttpHandler` is automatically configured to create additional HTTP/2 connections. If an app configures its own handler, consider setting `EnableMultipleHttp2Connections` to `true`:
 
@@ -57,7 +56,7 @@ var channel = GrpcChannel.ForAddress("https://localhost", new GrpcChannelOptions
 });
 ```
 
-::: moniker-end
+:::moniker-end
 
 There are a couple of workarounds for .NET Core 3.1 apps:
 
@@ -71,6 +70,25 @@ There are a couple of workarounds for .NET Core 3.1 apps:
 >
 > * Thread contention between streams trying to write to the connection.
 > * Connection packet loss causes all calls to be blocked at the TCP layer.
+
+## `ServerGarbageCollection` in client apps
+
+The .NET garbage collector has two modes: workstation garbage collection (GC) and server garbage collection. Each is each tuned for different workloads. ASP.NET Core apps use server GC by default.
+
+Highly concurrent apps generally perform better with server GC. If a gRPC client app is sending and receiving a high number of gRPC calls at the same time, then there may be a performance benefit in updating the app to use server GC.
+
+To enable server GC, set `<ServerGarbageCollection>` in the app's project file:
+
+```xml
+<PropertyGroup>
+  <ServerGarbageCollection>true</ServerGarbageCollection>
+</PropertyGroup>
+```
+
+For more information about garbage collection, see [Workstation and server garbage collection](/dotnet/standard/garbage-collection/workstation-server-gc).
+
+> [!NOTE]
+> ASP.NET Core apps use server GC by default. Enabling `<ServerGarbageCollection>` is only useful in non-server gRPC client apps, for example in a gRPC client console app.
 
 ## Load balancing
 
@@ -92,7 +110,7 @@ With client-side load balancing, the client knows about endpoints. For each gRPC
 
 Lookaside client load balancing is a technique where load balancing state is stored in a central location. Clients periodically query the central location for information to use when making load balancing decisions.
 
-`Grpc.Net.Client` currently doesn't support client-side load balancing. [Grpc.Core](https://www.nuget.org/packages/Grpc.Core) is a good choice if client-side load balancing is required in .NET.
+For more information, see <xref:grpc/loadbalancing>.
 
 ### Proxy load balancing
 
@@ -102,9 +120,9 @@ There are many L7 proxies available. Some options are:
 
 * [Envoy](https://www.envoyproxy.io/) - A popular open source proxy.
 * [Linkerd](https://linkerd.io/) - Service mesh for Kubernetes.
-* [YARP: A Reverse Proxy](https://microsoft.github.io/reverse-proxy/) - A preview open source proxy written in .NET.
+* [YARP: Yet Another Reverse Proxy](https://microsoft.github.io/reverse-proxy/) - An open source proxy written in .NET.
 
-::: moniker range=">= aspnetcore-5.0"
+:::moniker range=">= aspnetcore-5.0"
 
 ## Inter-process communication
 
@@ -135,7 +153,38 @@ var channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOp
 
 The preceding code configures a channel that sends a keep alive ping to the server every 60 seconds during periods of inactivity. The ping ensures the server and any proxies in use won't close the connection because of inactivity.
 
-::: moniker-end
+:::moniker-end
+
+## Flow control
+
+HTTP/2 flow control is a feature that prevents apps from being overwhelmed with data. When using flow control:
+
+* Each HTTP/2 connection and request has an available buffer window. The buffer window is how much data the app can receive at once.
+* Flow control activates if the buffer window is filled up. When activated, the sending app pauses sending more data.
+* Once the receiving app has processed data, then space in the buffer window is available. The sending app resumes sending data.
+
+Flow control can have a negative impact on performance when receiving large messages. If the buffer window is smaller than incoming message payloads or there's latency between the client and server, then data can be sent in start/stop bursts.
+
+Flow control performance issues can be fixed by increasing buffer window size. In Kestrel, this is configured with <xref:Microsoft.AspNetCore.Server.Kestrel.Core.Http2Limits.InitialConnectionWindowSize> and <xref:Microsoft.AspNetCore.Server.Kestrel.Core.Http2Limits.InitialStreamWindowSize> at app startup:
+
+```csharp
+builder.WebHost.ConfigureKestrel(options =>
+{
+    var http2 = options.Limits.Http2;
+    http2.InitialConnectionWindowSize = 2 * 1024 * 1024 * 2; // 2 MB
+    http2.InitialStreamWindowSize = 1024 * 1024; // 1 MB
+});
+```
+
+Recommendations:
+
+* If a gRPC service often receives messages larger than 96 KB, Kestrel's default stream window size, then consider increasing the connection and stream window size.
+* The connection window size should always be equal to or greater than the stream window size. A stream is part of the connection, and the sender is limited by both.
+
+For more information about how flow control works, see [HTTP/2 Flow Control (blog post)](https://medium.com/coderscorner/http-2-flow-control-77e54f7fd518).
+
+> [!IMPORTANT]
+> Increasing Kestrel's window size allows Kestrel to buffer more data on behalf of the app, which possibly increases memory usage. Avoid configuring an unnecessarily large window size.
 
 ## Streaming
 
@@ -264,3 +313,24 @@ The preceding code:
 * Attempts to get an array from `ByteString.Memory` with <xref:System.Runtime.InteropServices.MemoryMarshal.TryGetArray%2A?displayProperty=nameWithType>.
 * Uses the `ArraySegment<byte>` if it was successfully retrieved. The segment has a reference to the array, offset and count.
 * Otherwise, falls back to allocating a new array with `ByteString.ToByteArray()`.
+
+### gRPC services and large binary payloads
+
+gRPC and Protobuf can send and receive large binary payloads. Although binary Protobuf is more efficient than text-based JSON at serializing binary payloads, there are still important performance characteristics to keep in mind when working with large binary payloads.
+
+gRPC is a message-based RPC framework, which means:
+
+* The entire message is loaded into memory before gRPC can send it.
+* When the message is received, the entire message is deserialized into memory.
+
+Binary payloads are allocated as a byte array. For example, a 10 MB binary payload allocates a 10 MB byte array. Messages with large binary payloads can allocate byte arrays on the [large object heap](/dotnet/standard/garbage-collection/large-object-heap). Large allocations impact server performance and scalability.
+
+Advice for creating high-performance applications with large binary payloads:
+
+* **Avoid** large binary payloads in gRPC messages. A byte array larger than 85,000 bytes is considered a large object. Keeping below that size avoids allocating on the large object heap.
+* **Consider** splitting large binary payloads [using gRPC streaming](xref:grpc/client#client-streaming-call). Binary data is chunked and streamed over multiple messages. For more information on how to stream files, see examples in the grpc-dotnet repository:
+  *  [gRPC streaming file download](https://github.com/grpc/grpc-dotnet/tree/master/examples#downloader).
+  *  [gRPC streaming file upload](https://github.com/grpc/grpc-dotnet/tree/master/examples#uploader).
+* **Consider** not using gRPC for large binary data. In ASP.NET Core, Web APIs can be used alongside gRPC services. An HTTP endpoint can access the request and response stream body directly:
+  * [Read the request body using minimal web API](xref:fundamentals/minimal-apis#read-the-request-body)
+  * [Return stream response using minimal web API](xref:fundamentals/minimal-apis#stream)

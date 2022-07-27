@@ -5,15 +5,13 @@ description: Learn how to configure gRPC services on ASP.NET Core to be callable
 monikerRange: '>= aspnetcore-3.0'
 ms.author: jamesnk
 ms.date: 06/30/2020
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: grpc/browser
 ---
 # Use gRPC in browser apps
 
 By [James Newton-King](https://twitter.com/jamesnk)
 
- Learn how to configure an existing ASP.NET Core gRPC service to be callable from browser apps, using the [gRPC-Web](https://github.com/grpc/grpc/blob/2a388793792cc80944334535b7c729494d209a7e/doc/PROTOCOL-WEB.md) protocol. gRPC-Web allows browser JavaScript and Blazor apps to call gRPC services. It's not possible to call an HTTP/2 gRPC service from a browser-based app. gRPC services hosted in ASP.NET Core can be configured to support gRPC-Web alongside HTTP/2 gRPC.
-
+Learn how to configure an existing ASP.NET Core gRPC service to be callable from browser apps, using the [gRPC-Web](https://github.com/grpc/grpc/blob/2a388793792cc80944334535b7c729494d209a7e/doc/PROTOCOL-WEB.md) protocol. gRPC-Web allows browser JavaScript and Blazor apps to call gRPC services. It's not possible to call an HTTP/2 gRPC service from a browser-based app. gRPC services hosted in ASP.NET Core can be configured to support gRPC-Web alongside HTTP/2 gRPC.
 
 For instructions on adding a gRPC service to an existing ASP.NET Core app, see [Add gRPC services to an ASP.NET Core app](xref:grpc/aspnetcore#add-grpc-services-to-an-aspnet-core-app).
 
@@ -35,7 +33,7 @@ gRPC services hosted in ASP.NET Core can be configured to support gRPC-Web along
 To enable gRPC-Web with an ASP.NET Core gRPC service:
 
 * Add a reference to the [Grpc.AspNetCore.Web](https://www.nuget.org/packages/Grpc.AspNetCore.Web) package.
-* Configure the app to use gRPC-Web by adding `UseGrpcWeb` and `EnableGrpcWeb` to *Startup.cs*:
+* Configure the app to use gRPC-Web by adding `UseGrpcWeb` and `EnableGrpcWeb` to `Startup.cs`:
 
 [!code-csharp[](~/grpc/browser/sample/Startup.cs?name=snippet_1&highlight=10,14)]
 
@@ -72,6 +70,7 @@ The preceding code:
 Traditional gRPC over HTTP/2 supports streaming in all directions. gRPC-Web offers limited support for streaming:
 
 * gRPC-Web browser clients don't support calling client streaming and bidirectional streaming methods.
+* gRPC-Web .NET clients don't support calling client streaming and bidirectional streaming methods over HTTP/1.1.
 * ASP.NET Core gRPC services hosted on Azure App Service and IIS don't support bidirectional streaming.
 
 When using gRPC-Web, we only recommend the use of unary methods and server streaming methods.

@@ -6,7 +6,6 @@ monikerRange: '>= aspnetcore-2.1'
 ms.author: bradyg
 ms.custom: mvc
 ms.date: 11/12/2019
-no-loc: [Home, Privacy, Kestrel, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: signalr/redis-backplane
 ---
 
@@ -21,7 +20,7 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
 * Deploy a Redis server.
 
   > [!IMPORTANT] 
-  > For production use, a Redis backplane is recommended only when it runs in the same data center as the SignalR app. Otherwise, network latency degrades performance. If your SignalR app is running in the Azure cloud, we recommend Azure SignalR Service instead of a Redis backplane. You can use the Azure Redis Cache Service for development and test environments.
+  > For production use, a Redis backplane is recommended only when it runs in the same data center as the SignalR app. Otherwise, network latency degrades performance. If your SignalR app is running in the Azure cloud, we recommend Azure SignalR Service instead of a Redis backplane. 
 
   For more information, see the following resources:
 
@@ -29,7 +28,7 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
   * [Redis documentation](https://redis.io/)
   * [Azure Redis Cache documentation](/azure/redis-cache/)
 
-::: moniker range="= aspnetcore-2.1"
+:::moniker range="= aspnetcore-2.1"
 
 * In the SignalR app, install the `Microsoft.AspNetCore.SignalR.Redis` NuGet package.
 * In the `Startup.ConfigureServices` method, call `AddRedis` after `AddSignalR`:
@@ -53,9 +52,9 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
 
   In the preceding code, `options.Configuration` is initialized with whatever was specified in the connection string.
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="= aspnetcore-2.2"
+:::moniker range="= aspnetcore-2.2"
 
 * In the SignalR app, install one of the following NuGet packages:
 
@@ -89,9 +88,9 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
 
   For information about Redis options, see the [StackExchange Redis documentation](https://stackexchange.github.io/StackExchange.Redis/Configuration.html).
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range=">= aspnetcore-3.0"
+:::moniker range=">= aspnetcore-3.0"
 
 * In the SignalR app, install the following NuGet package:
 
@@ -120,7 +119,7 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
 
   For information about Redis options, see the [StackExchange Redis documentation](https://stackexchange.github.io/StackExchange.Redis/Configuration.html).
 
-::: moniker-end
+:::moniker-end
 
 * If you're using one Redis server for multiple SignalR apps, use a different channel prefix for each SignalR app.
 
@@ -131,7 +130,6 @@ This article explains SignalR-specific aspects of setting up a [Redis](https://r
   * [IIS](/iis/extensions/configuring-application-request-routing-arr/http-load-balancing-using-application-request-routing)
   * [HAProxy](https://www.haproxy.com/blog/load-balancing-affinity-persistence-sticky-sessions-what-you-need-to-know/)
   * [Nginx](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/#sticky)
-  * [pfSense](https://www.netgate.com/docs/pfsense/loadbalancing/inbound-load-balancing.html#sticky-connections)
 
 ## Redis server errors
 
@@ -149,7 +147,7 @@ SignalR automatically reconnects when the Redis server is available again.
 
 Here's an example that shows how to handle Redis connection failure events.
 
-::: moniker range="= aspnetcore-2.1"
+:::moniker range="= aspnetcore-2.1"
 
 ```csharp
 services.AddSignalR()
@@ -179,9 +177,9 @@ services.AddSignalR()
         });
 ```
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="> aspnetcore-2.1"
+:::moniker range="> aspnetcore-2.1"
 
 ```csharp
 services.AddSignalR()
@@ -212,7 +210,7 @@ services.AddSignalR()
         });
 ```
 
-::: moniker-end
+:::moniker-end
 
 ## Redis Clustering
 
